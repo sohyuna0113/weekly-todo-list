@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import MonthView from './components/MonthView';
+import WeekView from './components/WeekView';
+import { AppState } from './types/types';
 
-function App() {
+const initialData: AppState = {
+  tasks: {},
+  columns: {},
+  columnOrder: [],
+};
+
+const App: React.FC = () => {
+  const [state, setState] = useState<AppState>(() => {
+    const storedState = localStorage.getItem('todoState');
+    return storedState ? JSON.parse(storedState) : initialData;
+  });
+  const [view, setView] = useState<'month' | 'week'>('month');
+  const [selectedWeek, setSelectedWeek] = useState<string | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem('todoState', JSON.stringify(state));
+  }, [state]);
+
+  const handleWeekClick = (weekId: string) => {
+    setSelectedWeek(weekId);
+    setView('week');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {view === 'month' && <MonthView state={state} onWeekClick={handleWeekClick} />}
+      {view === 'week' && selectedWeek && (
+        <WeekView state={state} setState={setState} weekId={selectedWeek} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
