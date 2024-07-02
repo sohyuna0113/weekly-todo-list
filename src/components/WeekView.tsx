@@ -1,103 +1,81 @@
-import React, {useState} from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import React from 'react';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import styles from '../App.module.css';
-
-import { AppState, Task, Column } from '../types/types';
+import { AppState, Task } from '../types/types';
 import TaskInput from './TaskInput';
 
 interface WeekViewProps {
-    state: AppState;
-    setState: React.Dispatch<React.SetStateAction<AppState>>;
-    weekId: string;
+  state: AppState;
+  setState: React.Dispatch<React.SetStateAction<AppState>>;
+  onMonthClick: () => void;
 }
 
-const WeekView: React.FC<WeekViewProps> = ({ state, setState, weekId }) => {
-    const column = state.columns[weekId];
-    const tasks = column.taskIds.map(taskId => state.tasks[taskId]);
+const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-    const onDragEnd = (result: DropResult) => {
-        const { destination, source, draggableId } = result;
+const WeekView: React.FC<WeekViewProps> = ({ state, setState, onMonthClick }) => {
+  const addTask = (dayId: string, content: string) => {
+    const newTaskId = `task-${Date.now()}`;
+    const newTask: Task = { id: newTaskId, content };
+    const newColumn = {
+      ...state.columns[dayId],
+      taskIds: [...state.columns[dayId].taskIds, newTaskId],
+    };
 
-        if (!destination) {
-            return;
-        }
+    const newState = {
+      ...state,
+      tasks: {
+        ...state.tasks,
+        [newTaskId]: newTask,
+      },
+      columns: {
+        ...state.columns,
+        [newColumn.id]: newColumn,
+      },
+    };
 
-        if (destination.droppableId === source.droppableId && destination.index === source.index) {
-            return;
-        }
+    setState(newState);
+  };
 
-        const newTaskIds = Array.from(column.taskIds);
-        newTaskIds.splice(source.index, 1);
-        newTaskIds.splice(destination.index, 0, draggableId);
+  return (
+    <div>
+      <h1>Week View</h1>
+      <button onClick={onMonthClick}>Back to Month View</button>
+      <div className={styles.weekGrid}>
+        {daysOfWeek.map(dayId => {
+          const column = state.columns[dayId] || { id: dayId, title: dayId.charAt(0).toUpperCase() + dayId.slice(1), taskIds: [] };
+          const tasks = column.taskIds.map(taskId => state.tasks[taskId]);
 
-        const newColumn = {
-            ...column,
-            taskIds: newTaskIds,
-          };
-      
-          const newState = {
-            ...state,
-            columns: {
-              ...state.columns,
-              [newColumn.id]: newColumn,
-            },
-          };
-      
-          setState(newState);
-    }
-
-    const addTask = (content: string) => {
-        const newTaskId = `task-${Date.now()}`;
-        const newTask: Task = { id: newTaskId, content };
-        const newColumn = {
-          ...column,
-          taskIds: [...column.taskIds, newTaskId],
-        };
-    
-        const newState = {
-          ...state,
-          tasks: {
-            ...state.tasks,
-            [newTaskId]: newTask,
-          },
-          columns: {
-            ...state.columns,
-            [newColumn.id]: newColumn,
-          },
-        };
-    
-        setState(newState);
-      };
-
-      return (
-        <div>
-          <h1>{column.title}</h1>
-          <TaskInput onAddTask={addTask} />
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId={column.id}>
-              {provided => (
-                <div className={styles.column} {...provided.droppableProps} ref={provided.innerRef}>
-                  {tasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
-                      {provided => (
-                        <div
-                          className={styles.task}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          {task.content}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </div>
-      );
-}
+          return (
+            <div key={dayId} className={styles.dayColumn}>
+              <h2>{column.title}</h2>
+              <TaskInput onAddTask={(content: string) => addTask(dayId, content)} />
+              <Droppable droppableId={dayId}>
+                {provided => (
+                  <div className={styles.column} {...provided.droppableProps} ref={provided.innerRef}>
+                    {tasks.map((task, index) => (
+                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {provided => (
+                          <div
+                            className={styles.task}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            {task.content}
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default WeekView;
