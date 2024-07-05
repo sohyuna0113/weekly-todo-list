@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppState } from '../types/types';
 import styles from '../MonthView.module.css';
+import theme from '../style/theme';
 
 interface MonthViewProps {
     state: AppState;
@@ -9,15 +10,15 @@ interface MonthViewProps {
 
 const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
     
-    const weeks = Array(4).fill(null).map((_, index) => `column-${index + 1}`);
+    const days = Array(30).fill(null).map((_, index) => `column-${index + 1}`);
 
     return (
-        <div>
+        <div style={{ backgroundColor: theme.backgroundColor }}>
             <h1> Month View </h1>
             <div className={styles.grid}>
-        {weeks.map((weekId, index) => (
+        {days.map((weekId, index) => (
           <div key={index} className={styles.cell} onClick={() => onWeekClick(weekId)}>
-            <h2>{`Week ${index + 1}`}</h2>
+            <h2>{`Day - ${index + 1}`}</h2>
           </div>
         ))}
       </div>
