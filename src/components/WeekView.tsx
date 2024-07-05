@@ -1,8 +1,8 @@
 import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import TaskInput from './TaskInput';
 import styles from '../App.module.css';
 import { AppState, Task } from '../types/types';
-import TaskInput from './TaskInput';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface WeekViewProps {
   state: AppState;
