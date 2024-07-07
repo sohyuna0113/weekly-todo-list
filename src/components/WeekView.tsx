@@ -10,9 +10,21 @@ interface WeekViewProps {
   onMonthClick: () => void;
 }
 
-const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const daysOfWeek = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
 
-const WeekView: React.FC<WeekViewProps> = ({ state, setState, onMonthClick }) => {
+const WeekView: React.FC<WeekViewProps> = ({
+  state,
+  setState,
+  onMonthClick,
+}) => {
   const addTask = (dayId: string, content: string) => {
     const newTaskId = `task-${Date.now()}`;
     const newTask: Task = { id: newTaskId, content };
@@ -41,20 +53,34 @@ const WeekView: React.FC<WeekViewProps> = ({ state, setState, onMonthClick }) =>
       <h1>Week View</h1>
       <button onClick={onMonthClick}>Back to Month View</button>
       <div className={styles.weekGrid}>
-        {daysOfWeek.map(dayId => {
-          const column = state.columns[dayId] || { id: dayId, title: dayId.charAt(0).toUpperCase() + dayId.slice(1), taskIds: [] };
-          const tasks = column.taskIds.map(taskId => state.tasks[taskId]);
+        {daysOfWeek.map((dayId) => {
+          const column = state.columns[dayId] || {
+            id: dayId,
+            title: dayId.charAt(0).toUpperCase() + dayId.slice(1),
+            taskIds: [],
+          };
+          const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
 
           return (
             <div key={dayId} className={styles.dayColumn}>
               <h2>{column.title}</h2>
-              <TaskInput onAddTask={(content: string) => addTask(dayId, content)} />
+              <TaskInput
+                onAddTask={(content: string) => addTask(dayId, content)}
+              />
               <Droppable droppableId={dayId}>
-                {provided => (
-                  <div className={styles.column} {...provided.droppableProps} ref={provided.innerRef}>
+                {(provided) => (
+                  <div
+                    className={styles.column}
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
                     {tasks.map((task, index) => (
-                      <Draggable key={task.id} draggableId={task.id} index={index}>
-                        {provided => (
+                      <Draggable
+                        key={task.id}
+                        draggableId={task.id}
+                        index={index}
+                      >
+                        {(provided) => (
                           <div
                             className={styles.task}
                             ref={provided.innerRef}
