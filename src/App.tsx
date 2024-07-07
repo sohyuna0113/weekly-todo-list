@@ -3,7 +3,6 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import MonthView from './components/MonthView';
 import WeekView from './components/WeekView';
 import { AppState } from './types/types';
-import styles from './App.module.css';
 
 const initialData: AppState = {
   tasks: {
@@ -13,15 +12,23 @@ const initialData: AppState = {
     'task-4': { id: 'task-4', content: 'Cook dinner' },
   },
   columns: {
-    'monday': { id: 'monday', title: 'Monday', taskIds: [] },
-    'tuesday': { id: 'tuesday', title: 'Tuesday', taskIds: [] },
-    'wednesday': { id: 'wednesday', title: 'Wednesday', taskIds: [] },
-    'thursday': { id: 'thursday', title: 'Thursday', taskIds: [] },
-    'friday': { id: 'friday', title: 'Friday', taskIds: [] },
-    'saturday': { id: 'saturday', title: 'Saturday', taskIds: [] },
-    'sunday': { id: 'sunday', title: 'Sunday', taskIds: [] },
+    monday: { id: 'monday', title: 'Monday', taskIds: [] },
+    tuesday: { id: 'tuesday', title: 'Tuesday', taskIds: [] },
+    wednesday: { id: 'wednesday', title: 'Wednesday', taskIds: [] },
+    thursday: { id: 'thursday', title: 'Thursday', taskIds: [] },
+    friday: { id: 'friday', title: 'Friday', taskIds: [] },
+    saturday: { id: 'saturday', title: 'Saturday', taskIds: [] },
+    sunday: { id: 'sunday', title: 'Sunday', taskIds: [] },
   },
-  columnOrder: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+  columnOrder: [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ],
 };
 
 const App: React.FC = () => {
@@ -29,6 +36,10 @@ const App: React.FC = () => {
     const storedState = localStorage.getItem('todoState');
     return storedState ? JSON.parse(storedState) : initialData;
   });
+  const today = new Date();
+  const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  const currentDay = weekdays[today.getDay()];
+  
   const [view, setView] = useState<'month' | 'week'>('month');
   const [selectedWeek, setSelectedWeek] = useState<string | null>(null);
 
@@ -52,7 +63,10 @@ const App: React.FC = () => {
       return;
     }
 
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
       return;
     }
 
@@ -110,9 +124,15 @@ const App: React.FC = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div>
-        {view === 'month' && <MonthView state={state} onWeekClick={handleWeekClick} />}
+        {view === 'month' && (
+          <MonthView state={state} onWeekClick={handleWeekClick} />
+        )}
         {view === 'week' && (
-          <WeekView state={state} setState={setState} onMonthClick={handleMonthClick} />
+          <WeekView
+            state={state}
+            setState={setState}
+            onMonthClick={handleMonthClick}
+          />
         )}
       </div>
     </DragDropContext>
