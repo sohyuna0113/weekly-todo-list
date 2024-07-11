@@ -2,6 +2,7 @@ import React from 'react';
 import styles from '../MonthView.module.css';
 import Title from '../style/Title';
 import Subtitle from '../style/Subtitle';
+import Text from '../style/Text';
 import Container from '../style/Container';
 import { AppState } from '../types/types';
 import { formatDate, getDayOfWeek } from '../utils/dateUtils';
@@ -21,7 +22,7 @@ const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
 
   return (
     <Container>
-      <Title> {currentDay} </Title>
+      <Title>{currentDay}</Title>
       <Subtitle>{formattedDate}</Subtitle>
       <div className={styles.grid}>
         {days.map((dayId, index) => {
@@ -38,7 +39,12 @@ const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
             <Subtitle>{`${index + 1}`}</Subtitle>
             <ul>
                 {dayTasks.map((taskId, taskIndex) => (
-                  <li key={taskIndex}>{state.tasks[taskId]?.content}</li>
+                  <li key={taskIndex}>
+                    <label className={styles.checkboxLabel}>
+                    <input type="checkbox" className={styles.checkbox} />
+                    <Text>{state.tasks[taskId]?.content}</Text>
+                  </label>
+                </li>
                 ))}
               </ul>
           </div>

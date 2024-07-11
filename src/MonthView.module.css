@@ -10,7 +10,7 @@
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+
   height: 150px;
   position: relative;
   transition: background-color 0.3s ease;
@@ -32,6 +32,15 @@ ul {
 
 li {
   margin-bottom: 3px;
+}
+
+.checkboxLabel {
+  display: flex; /* or display: inline-flex; */
+  align-items: center; /* Align items vertically */
+}
+
+.checkbox {
+  padding-top: 5px;
 }
 
 @media (max-width: 1024px) {

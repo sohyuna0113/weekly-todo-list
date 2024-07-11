@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TaskInput from './TaskInput';
 import styles from '../App.module.css';
 import { AppState, Task } from '../types/types';
