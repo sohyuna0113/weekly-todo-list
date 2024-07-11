@@ -5,12 +5,7 @@ import WeekView from './components/WeekView';
 import { AppState } from './types/types';
 
 const initialData: AppState = {
-  tasks: {
-    'task-1': { id: 'task-1', content: 'Take out the garbage' },
-    'task-2': { id: 'task-2', content: 'Watch my favorite show' },
-    'task-3': { id: 'task-3', content: 'Charge my phone' },
-    'task-4': { id: 'task-4', content: 'Cook dinner' },
-  },
+  tasks: {},
   columns: {
     monday: { id: 'monday', title: 'Monday', taskIds: [] },
     tuesday: { id: 'tuesday', title: 'Tuesday', taskIds: [] },
