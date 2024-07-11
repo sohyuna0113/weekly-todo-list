@@ -20,6 +20,7 @@ const daysOfWeek = [
   'sunday',
 ];
 
+
 const WeekView: React.FC<WeekViewProps> = ({
   state,
   setState,
@@ -105,3 +106,4 @@ const WeekView: React.FC<WeekViewProps> = ({
 };
 
 export default WeekView;
+

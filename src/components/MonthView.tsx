@@ -56,3 +56,4 @@ const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
 };
 
 export default MonthView;
+
