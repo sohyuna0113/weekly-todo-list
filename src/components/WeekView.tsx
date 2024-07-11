@@ -26,12 +26,23 @@ const WeekView: React.FC<WeekViewProps> = ({
   setState,
   onMonthClick,
 }) => {
+  useEffect(() => {
+    const savedState = localStorage.getItem('appState');
+    if (savedState) {
+      setState(JSON.parse(savedState));
+    }
+  }, [setState]);
+
+  useEffect(() => {
+    localStorage.setItem('appState', JSON.stringify(state));
+  }, [state]);
+
   const addTask = (dayId: string, content: string) => {
     const newTaskId = `task-${Date.now()}`;
-    const newTask: Task = { id: newTaskId, content };
+    const newTask: Task = { id: newTaskId, content, completed: false };
     const newColumn = {
       ...state.columns[dayId],
-      taskIds: [...state.columns[dayId].taskIds, newTaskId],
+      taskIds: [...(state.columns[dayId]?.taskIds || []), newTaskId],
     };
 
     const newState = {
@@ -40,6 +51,44 @@ const WeekView: React.FC<WeekViewProps> = ({
         ...state.tasks,
         [newTaskId]: newTask,
       },
+      columns: {
+        ...state.columns,
+        [dayId]: newColumn,
+      },
+    };
+
+    setState(newState);
+  };
+
+  const toggleTaskCompletion = (taskId: string) => {
+    const updatedTask = {
+      ...state.tasks[taskId],
+      completed: !state.tasks[taskId].completed,
+    };
+
+    const newState = {
+      ...state,
+      tasks: {
+        ...state.tasks,
+        [taskId]: updatedTask,
+      },
+    };
+
+    setState(newState);
+  };
+
+  const deleteTask = (dayId: string, taskId: string) => {
+    const newTaskIds = state.columns[dayId].taskIds.filter(id => id !== taskId);
+    const newColumn = {
+      ...state.columns[dayId],
+      taskIds: newTaskIds,
+    };
+
+    const { [taskId]: _, ...newTasks } = state.tasks;
+
+    const newState = {
+      ...state,
+      tasks: newTasks,
       columns: {
         ...state.columns,
         [newColumn.id]: newColumn,
@@ -60,7 +109,7 @@ const WeekView: React.FC<WeekViewProps> = ({
             title: dayId.charAt(0).toUpperCase() + dayId.slice(1),
             taskIds: [],
           };
-          const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
+          const tasks = column.taskIds.map((taskId) => state.tasks[taskId]).filter(Boolean);
 
           return (
             <div key={dayId} className={styles.dayColumn}>
@@ -83,12 +132,20 @@ const WeekView: React.FC<WeekViewProps> = ({
                       >
                         {(provided) => (
                           <div
-                            className={styles.task}
+                            className={`${styles.task} ${task.completed ? styles.completed : ''}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            {task.content}
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={task.completed}
+                                onChange={() => toggleTaskCompletion(task.id)}
+                              />
+                              <span>{task.content}</span>
+                            </label>
+                            <button onClick={() => deleteTask(dayId, task.id)}>Delete</button>
                           </div>
                         )}
                       </Draggable>
