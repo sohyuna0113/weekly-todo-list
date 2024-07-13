@@ -234,3 +234,4 @@ const WeekView: React.FC<WeekViewProps> = ({ state, setState, selectedDate, onMo
 };
 
 export default WeekView;
+
