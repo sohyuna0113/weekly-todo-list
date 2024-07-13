@@ -16,11 +16,11 @@
 }
 
 .cell:hover {
-  background-color: #B7B1C8; /* Hover 시 배경색 변경 */
+  background-color: #b7b1c8; /* Hover 시 배경색 변경 */
 }
 
 .cell.today {
-  background-color: #A2C5C9; /* 오늘 날짜 셀 배경색 */
+  background-color: #a2c5c9; /* 오늘 날짜 셀 배경색 */
 }
 
 ul {

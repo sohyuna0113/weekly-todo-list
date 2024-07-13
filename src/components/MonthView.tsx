@@ -9,7 +9,7 @@ import { formatDate, getDayOfWeek } from '../utils/dateUtils';
 
 interface MonthViewProps {
   state: AppState;
-  onWeekClick: (weekId: string) => void;
+  onWeekClick: (selectedDate: Date) => void;
 }
 
 const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
@@ -17,8 +17,15 @@ const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
   const currentDay = getDayOfWeek(today);
   const formattedDate = formatDate(today);
 
-  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const days = Array.from({ length: daysInMonth }, (_, index) => `column-${index + 1}`);
+  const daysInMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0
+  ).getDate();
+  const days = Array.from(
+    { length: daysInMonth },
+    (_, index) => `column-${index + 1}`
+  );
 
   return (
     <Container>
@@ -30,25 +37,30 @@ const MonthView: React.FC<MonthViewProps> = ({ state, onWeekClick }) => {
           const isToday = today.getDate() === index + 1;
           const cellClasses = `${styles.cell} ${isToday ? styles.today : ''}`;
 
+          const handleDayClick = () => {
+            const selectedDate = new Date(today.getFullYear(), today.getMonth(), index + 1);
+            onWeekClick(selectedDate);
+          };
+
           return (
-          <div
-            key={index}
-            className={cellClasses}
-            onClick={() => onWeekClick(dayId)}
-          >
-            <Subtitle>{`${index + 1}`}</Subtitle>
-            <ul>
+            <div
+              key={index}
+              className={cellClasses}
+              onClick={handleDayClick}
+            >
+              <Subtitle>{`${index + 1}`}</Subtitle>
+              <ul>
                 {dayTasks.map((taskId, taskIndex) => (
                   <li key={taskIndex}>
                     <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} />
-                    <Text>{state.tasks[taskId]?.content}</Text>
-                  </label>
-                </li>
+                      <input type="checkbox" className={styles.checkbox} />
+                      <Text>{state.tasks[taskId]?.content}</Text>
+                    </label>
+                  </li>
                 ))}
               </ul>
-          </div>
-          )
+            </div>
+          );
         })}
       </div>
     </Container>
